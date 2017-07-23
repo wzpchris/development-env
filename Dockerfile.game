@@ -1,0 +1,85 @@
+FROM ubuntu:14.04
+MAINTAINER wzpchris
+
+RUN sed -i 's/archive.ubuntu.com/cn.archive.ubuntu.com/' /etc/apt/sources.list
+#RUN sed -i 's/archive.ubuntu.com/mirrors.163.com/' /etc/apt/sources.list
+#RUN sed -i 's/archive.ubuntu.com/mirrors.sohu.com/' /etc/apt/sources.list
+#RUN sed -i 's/archive.ubuntu.com/mirror.neu.edu.cn/' /etc/apt/sources.list
+#RUN sed -i 's/archive.ubuntu.com/mirror.tju.edu.cn/' /etc/apt/sources.list
+RUN apt-get clean
+RUN apt-get autoclean
+RUN apt-get -y update
+ENV DEBIAN_FRONTEND noninteractive
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+RUN apt-get install --fix-missing --force-yes -y \
+    vim \
+    python \
+    psmisc \
+    inetutils-ping \
+    mysql-client \
+    mysql-server \
+    build-essential \
+    libtool \
+    autotools-dev \
+    automake \
+    libz-dev \
+    libcurl4-openssl-dev \
+    libmysqlclient-dev \
+    libfreetype6-dev \
+    libreadline-dev \
+    git \
+    gawk \
+    gdb \
+    subversion	\
+    wget	\
+    ctags	\
+    telnet	\
+    ccache	\
+    curl	\
+    lua5.1  \
+    python-pip \
+    python-dev \
+    xclip \
+    vim-gnome \
+    astyle \
+    python-setuptools
+
+
+# Set Timezone
+#RUN echo "Asia/Shanghai" > /etc/timezone
+#RUN dpkg-reconfigure -f noninteractive tzdata
+
+#ADD bashrc /root/.my_bashrc
+#RUN echo "source ~/.my_bashrc" >> ~/.bashrc
+
+#RUN wget -q -O /root/.bashrc "https://github.com/navy1125/vimrc/blob/master/bashrc"
+#RUN wget -q -O /root/.vimrc "https://github.com/navy1125/vimrc/blob/master/vimrc"
+
+#mysql utf8 setting
+RUN sed -i "/default-character-set/d" /etc/mysql/my.cnf
+RUN sed -i "/\[mysqld]/a skip-character-set-client-handshake" /etc/mysql/my.cnf
+RUN sed -i "/\[mysqld]/a collation-server=utf8_unicode_ci" /etc/mysql/my.cnf
+RUN sed -i "/\[mysqld]/a character-set-server=utf8" /etc/mysql/my.cnf
+RUN sed -i "/\[mysqld]/a init_connect= 'SET NAMES utf8' " /etc/mysql/my.cnf
+RUN sed -i "/\[mysqld]/a init_connect=‘SET collation_connection = utf8_unicode_ci' " /etc/mysql/my.cnf
+
+RUN pip install apscheduler==3.0.3
+
+# install tensorflow
+#RUN pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.12.1-cp27-none-linux_x86_64.whl
+
+#instll vimrc
+RUN git clone https://github.com/navy1125/vimrc.git /root/vimrc
+#RUN wget -qO "https://raw.github.com/ma6174/vim/master/setup.sh" | sh -x
+RUN mv /root/vimrc/vimrc /root/.vimrc
+RUN mv /root/vimrc/bashrc /root/.bashrc
+
+#RUN git clone https://github.com/hw233/vim-for-server.git /root/vimrc
+#RUN mv /root/vimrc/vimrc /root/.vimrc
+#mkdir -p ~/.vim/autoload ~/.vim/bundle && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+#vim +PluginInstall +qall
+
